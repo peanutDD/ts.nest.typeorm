@@ -1,26 +1,16 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { User } from './user/user.entity';
-import { UserModule } from './user/user.module';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { UsersModule } from './users/users.module';
+import { typeOrmConfig } from './config/typeorm';
+import { GraphQLModule } from '@nestjs/graphql';
 
 @Module({
   imports: [
-    TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: 'localhost',
-      port: 3306,
-      username: 'root',
-      password: '2486',
-      database: 'nestdb',
-      entities: [User],
-      synchronize: true,
-      logging: true,
-    }),
-    UserModule,
+    GraphQLModule.forRoot({ autoSchemaFile: 'schema.gql' }),
+    TypeOrmModule.forRoot(typeOrmConfig as TypeOrmModuleOptions),
+    UsersModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
