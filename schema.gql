@@ -10,6 +10,7 @@ type User {
   username: String!
   password: String!
   confirmedPassword: String!
+  token: String!
 }
 
 """
