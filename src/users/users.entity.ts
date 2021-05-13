@@ -1,9 +1,11 @@
-import { Entity, Column, Index, BeforeInsert } from 'typeorm';
+import { Entity, Column, Index, BeforeInsert, OneToMany } from 'typeorm';
 import { Base } from '../shared/base.entity';
 import * as bcrypt from 'bcryptjs';
 import { Field, ObjectType } from '@nestjs/graphql';
 import * as jwt from 'jsonwebtoken';
 import config from '../config/configuration';
+import { Post } from '../posts/posts.entity';
+import { JwtPayload } from '../auth/jwtpayload.interface';
 
 @Entity('users')
 @ObjectType()
@@ -34,7 +36,10 @@ export class User extends Base {
 
   @Field(() => String)
   get token() {
-    const payload = { id: this.id, username: this.username };
+    const payload: JwtPayload = { id: this.id, username: this.username };
     return jwt.sign(payload, config.auth.secretKey, { expiresIn: '7D' });
   }
+
+  @OneToMany(() => Post, (post) => post.user)
+  posts: Post[];
 }

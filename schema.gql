@@ -2,6 +2,29 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type Comment {
+  id: Int!
+  createdAt: DateTime!
+  updateAt: DateTime!
+  body: String!
+  user: User!
+  post: Post!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Post {
+  id: Int!
+  createdAt: DateTime!
+  updateAt: DateTime!
+  body: String!
+  user: User!
+  comments: [Comment]!
+}
+
 type User {
   id: Int!
   createdAt: DateTime!
@@ -13,17 +36,18 @@ type User {
   token: String!
 }
 
-"""
-A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
-"""
-scalar DateTime
-
 type Query {
   hello: String!
+  getPosts: [Post]!
+  getPost(id: Int!): Post!
 }
 
 type Mutation {
-  register(input: RegisterInput!): User!
+  register(data: RegisterInput!): User!
+  login(data: LoginInput!): User!
+  createPost(data: CreatePostInput!): Post!
+  updatePost(data: UpdatePostInput!, id: Int!): Post!
+  createComment(data: CreateCommentInput!, postId: Int!): Comment!
 }
 
 input RegisterInput {
@@ -31,4 +55,21 @@ input RegisterInput {
   username: String!
   password: String!
   confirmedPassword: String!
+}
+
+input LoginInput {
+  username: String!
+  password: String!
+}
+
+input CreatePostInput {
+  body: String!
+}
+
+input UpdatePostInput {
+  body: String!
+}
+
+input CreateCommentInput {
+  body: String!
 }
