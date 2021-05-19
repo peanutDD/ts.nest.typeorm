@@ -23,6 +23,9 @@ type Post {
   body: String!
   user: User!
   comments: [Comment]!
+  commentCount: Int!
+  likes: [User]!
+  likeCount: Int!
 }
 
 type User {
@@ -37,7 +40,6 @@ type User {
 }
 
 type Query {
-  hello: String!
   getPosts: [Post]!
   getPost(id: Int!): Post!
 }
@@ -47,7 +49,12 @@ type Mutation {
   login(data: LoginInput!): User!
   createPost(data: CreatePostInput!): Post!
   updatePost(data: UpdatePostInput!, id: Int!): Post!
+  deletePost(id: Int!): Post!
   createComment(data: CreateCommentInput!, postId: Int!): Comment!
+  deleteComment(commentId: Int!): Boolean!
+  likePost(id: Int!): Post!
+  fileUpload(file: Upload!): String!
+  aliyunFileUpload(file: Upload!): String!
 }
 
 input RegisterInput {
@@ -73,3 +80,6 @@ input UpdatePostInput {
 input CreateCommentInput {
   body: String!
 }
+
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload

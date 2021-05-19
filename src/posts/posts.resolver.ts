@@ -27,7 +27,6 @@ export class PostsResolver {
     @Args('data') createPostData: CreatePostInput,
     @Context() context: any,
   ): Promise<Post> {
-    console.log(context.req);
     const { user } = context.req;
     return await this.postsService.createPost(createPostData, user);
   }
@@ -43,6 +42,16 @@ export class PostsResolver {
     return await this.postsService.updatePost(id, updatePostData, user);
   }
 
+  @Mutation(() => Post)
+  @UseGuards(GqlAuthGuard)
+  async deletePost(
+    @Args({ name: 'id', type: () => Int }) id: number,
+    @Context() context: any,
+  ): Promise<boolean> {
+    const { user } = context.req;
+    return await this.postsService.deletePost(id, user);
+  }
+
   @Mutation(() => Comment)
   @UseGuards(GqlAuthGuard)
   async createComment(
@@ -51,10 +60,31 @@ export class PostsResolver {
     @Context() context: any,
   ): Promise<Comment> {
     const { user } = context.req;
+    console.log(user);
     return await this.postsService.createComment(
       postId,
       createCommentData,
       user,
     );
+  }
+
+  @Mutation(() => Boolean)
+  @UseGuards(GqlAuthGuard)
+  async deleteComment(
+    @Args({ name: 'commentId', type: () => Int }) id: number,
+    @Context() context: any,
+  ): Promise<boolean> {
+    const { user } = context.req;
+    return await this.postsService.deleteComment(id, user);
+  }
+
+  @Mutation(() => Post)
+  @UseGuards(GqlAuthGuard)
+  async likePost(
+    @Args({ name: 'id', type: () => Int }) id: number,
+    @Context() context: any,
+  ): Promise<Post> {
+    const { user } = context.req;
+    return await this.postsService.likePost(id, user);
   }
 }

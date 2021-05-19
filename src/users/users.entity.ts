@@ -6,6 +6,7 @@ import * as jwt from 'jsonwebtoken';
 import config from '../config/configuration';
 import { Post } from '../posts/posts.entity';
 import { JwtPayload } from '../auth/jwtpayload.interface';
+import { classToPlain, Exclude } from 'class-transformer';
 
 @Entity('users')
 @ObjectType()
@@ -22,10 +23,12 @@ export class User extends Base {
 
   @Column('text')
   @Field()
+  @Exclude()
   password: string;
 
   @Column('text')
   @Field()
+  @Exclude()
   confirmedPassword: string;
 
   @BeforeInsert()
@@ -42,4 +45,8 @@ export class User extends Base {
 
   @OneToMany(() => Post, (post) => post.user)
   posts: Post[];
+
+  toJSON() {
+    return classToPlain(this);
+  }
 }

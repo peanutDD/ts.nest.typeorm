@@ -35,7 +35,7 @@ export class PostsService {
    *
    */
   async one(id: number): Promise<Post> {
-    return this.postsRepository.findOneOrFail(id);
+    return this.postsRepository.findOneOrFail(id, { relations: ['comments'] });
   }
 
   /**
@@ -69,6 +69,18 @@ export class PostsService {
   }
 
   /**
+   * delete post
+   *
+   * @Method deletePost
+   *
+   */
+  async deletePost(id: number, user: User): Promise<boolean> {
+    const post = await this.postsRepository.findOneOrFail({ id, user });
+    await this.postsRepository.remove(post);
+    return true;
+  }
+
+  /**
    * create comment
    *
    * @Method createComment
@@ -80,6 +92,7 @@ export class PostsService {
     user: User,
   ): Promise<Comment> {
     const post = await this.postsRepository.findOneOrFail(postId);
+    console.log(post);
     return await this.commentsRepository
       .create({
         ...createCommentData,
@@ -87,5 +100,39 @@ export class PostsService {
         post,
       })
       .save();
+  }
+
+  /**
+   * delete comment
+   *
+   * @Method deleteComment
+   *
+   */
+  async deleteComment(id: number, user: User): Promise<boolean> {
+    const comment = await this.commentsRepository.findOneOrFail({ id, user });
+
+    await this.commentsRepository.remove(comment);
+    return true;
+  }
+
+  /**
+   * display likepost
+   *
+   * @Method likePost
+   *
+   */
+
+  async likePost(id: number, user: User): Promise<Post> {
+    const post = await this.postsRepository.findOneOrFail(id, {
+      relations: ['likes'],
+    });
+
+    if (post.likes && post.likes.find((like) => like.id === user.id)) {
+      post.likes = post.likes.filter((like) => like.id !== user.id);
+    } else {
+      post.likes = [...post.likes, user];
+    }
+
+    return await this.postsRepository.save(post);
   }
 }
